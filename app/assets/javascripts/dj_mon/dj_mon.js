@@ -13,8 +13,8 @@ $(function(){
 
     $.getJSON(dataUrl).success(function(data){
       var template = $('#dj_reports_template').html();
-      if(data.length > 0)
-        var output = Mustache.render(template, data);
+      if(data.dj_reports.length > 0)
+        var output = Mustache.render(template, data.dj_reports);
       else
         var output = "<div class='alert centered'>No Jobs</div>";
       tabContent.html(output);

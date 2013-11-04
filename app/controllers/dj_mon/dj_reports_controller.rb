@@ -7,10 +7,19 @@ module DjMon
     before_filter :set_api_version
 
     def index
+      params[:page] ||=1
+      params[:per_page] ||=5
+      
+      @reports = DjReport.all_reports.paginate(:page => params[:page], :per_page => params[:per_page])
+      respond_with @reports
     end
 
     def all
-      respond_with DjReport.all_reports.paginate(:page => params[:page], :per_page => params[:per_page])
+      params[:page] ||=1
+      params[:per_page] ||=5
+      
+      @reports = DjReport.all_reports.paginate(:page => params[:page], :per_page => params[:per_page])
+      respond_with @reports
     end
 
     def failed

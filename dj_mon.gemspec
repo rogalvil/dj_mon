@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", ">= 3.1"
   s.add_dependency "haml", ">= 3.1"
-  s.add_dependency "will_paginate", "~> 3.0"
+  s.add_dependency "will_paginate-bootstrap"
 
   s.add_development_dependency 'delayed_job_active_record'
   s.add_development_dependency 'delayed_job_mongoid'
