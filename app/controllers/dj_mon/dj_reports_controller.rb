@@ -10,7 +10,7 @@ module DjMon
     end
 
     def all
-      respond_with DjReport.all_reports
+      respond_with DjReport.all_reports.paginate(:page => params[:page], :per_page => params[:per_page])
     end
 
     def failed
