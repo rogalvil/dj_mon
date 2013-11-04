@@ -15,7 +15,7 @@
     = link_to "Active", "#active", "data-toggle" => "tab"
 
 .tab-content
-  .tab-pane#all.active{ 'data-url'   => all_dj_reports_url }
+  .tab-pane#all.active{ 'data-url'=> all_dj_reports_url }
   .tab-pane#failed{ 'data-url'=> failed_dj_reports_url }
   .tab-pane#active{ 'data-url'=> active_dj_reports_url }
   .tab-pane#queued{ 'data-url'=> queued_dj_reports_url }
@@ -72,8 +72,7 @@
           {{/failed}}
 
       {{/.}}
-
-=will_paginate @reports
+= paginate @reports
 
 %script#last_error_template{ :type=> "text/x-handlebars-template" }
   .modal.hide

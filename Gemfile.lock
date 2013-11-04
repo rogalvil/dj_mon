@@ -2,9 +2,10 @@ PATH
   remote: .
   specs:
     dj_mon (1.1.0)
+      bootstrap-will_paginate
       haml (>= 3.1)
+      kaminari
       rails (>= 3.1)
-      will_paginate (~> 3.0)
 
 GEM
   remote: http://rubygems.org/
@@ -37,6 +38,8 @@ GEM
       i18n (~> 0.6)
       multi_json (~> 1.0)
     arel (3.0.2)
+    bootstrap-will_paginate (0.0.10)
+      will_paginate
     builder (3.0.3)
     delayed_job (3.0.3)
       activesupport (~> 3.0)
@@ -53,6 +56,10 @@ GEM
     i18n (0.6.1)
     journey (1.0.4)
     json (1.8.1)
+    kaminari (0.13.0)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
+      railties (>= 3.0.0)
     mail (2.4.4)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
