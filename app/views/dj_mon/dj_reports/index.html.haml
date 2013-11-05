@@ -72,7 +72,7 @@
           {{/failed}}
 
       {{/.}}
-= paginate @reports
+= will_paginate @reports, page_links: false if @reports
 
 %script#last_error_template{ :type=> "text/x-handlebars-template" }
   .modal.hide

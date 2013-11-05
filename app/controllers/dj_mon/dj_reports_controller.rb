@@ -7,23 +7,28 @@ module DjMon
     before_filter :set_api_version
 
     def index
+      @reports = DjReport.all_reports.paginate(page: params[:page], :per_page => 5)
+      respond_with @reports
     end
 
     def all
-      @reports = DjReport.all_reports
+      @reports = DjReport.all_reports.paginate(page: params[:page], :per_page => 5)
       respond_with @reports
     end
 
     def failed
-      respond_with DjReport.failed_reports
+      @reports = DjReport.failed_reports.paginate(page: params[:page], :per_page => 5)
+      respond_with @reports
     end
 
     def active
-      respond_with DjReport.active_reports
+      @reports = DjReport.active_reports.paginate(page: params[:page], :per_page => 5)
+      respond_with @reports
     end
 
     def queued
-      respond_with DjReport.queued_reports
+      @reports = DjReport.queued_reports.paginate(page: params[:page], :per_page => 5)
+      respond_with @reports
     end
 
     def dj_counts
