@@ -4,8 +4,8 @@
 
 %select.queue
   %option **Filter By Queue**
-  %option Default
-  %option Reporting
+  -@queue_names.each do |queue|
+    %option= queue
 
 %ul.nav.nav-tabs
   %li.active

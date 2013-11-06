@@ -6,6 +6,7 @@ module DjMon
     before_filter :authenticate
     before_filter :set_api_version
     before_filter :dj_counts
+    before_filter :get_distinct_queues
 
     def index
     end
@@ -45,6 +46,11 @@ module DjMon
 
     def dj_counts
       @counts = DjReport.dj_counts
+    end
+
+    def get_distinct_queues
+      @queue_names = Delayed::Job.select(:queue).map(&:queue).uniq
+      puts @queue_names.inspect
     end
 
     def settings
