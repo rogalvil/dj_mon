@@ -1,88 +1,84 @@
 %p
   .lead
     Delayed Jobs
-  .pull-right
-    = link_to "Get DJ Mon for iPhone", "http://itunes.apple.com/app/dj-mon/id552732872", :target => '_blank', :class => 'btn btn-mini'
+
+%select.queue
+  %option **Filter By Queue**
+  %option Default
+  %option Reporting
 
 %ul.nav.nav-tabs
   %li.active
-    = link_to "All", "#all", "data-toggle" => "tab"
+    = link_to "All", all_dj_reports_url
   %li
-    = link_to "Failed", "#failed", "data-toggle" => "tab"
+    = link_to "Failed", failed_dj_reports_url
   %li
-    = link_to "Queued", "#queued", "data-toggle" => "tab"
+    = link_to "Queued", queued_dj_reports_url
   %li
-    = link_to "Active", "#active", "data-toggle" => "tab"
+    = link_to "Active", active_dj_reports_url
+  %li
+    = link_to "Queues", queues_dj_reports_url
 
-.tab-content
-  .tab-pane#all.active{ 'data-url'=> all_dj_reports_url }
-  .tab-pane#failed{ 'data-url'=> failed_dj_reports_url }
-  .tab-pane#active{ 'data-url'=> active_dj_reports_url }
-  .tab-pane#queued{ 'data-url'=> queued_dj_reports_url }
-
-%script#dj_reports_template{ :type=> "text/x-handlebars-template" }
-  %table.table.table-striped#jobs-table
-    %thead
-      %tr
-        %th
-          Queue
-        %th
-          ID
-        %th
-          Priority
-        %th
-          Attempts
-        %th
-          Last Error
-        %th.date
-          Run at
-        %th.date
-          Created at
-        %th.date
-          Failed at
-
-    %tbody
-      {{#.}}
+%table.table.table-striped#jobs-table
+  %thead
+    %tr
+      %th
+        Queue
+      %th
+        ID
+      %th
+        Priority
+      %th
+        Attempts
+      %th
+        Last Error
+      %th.date
+        Run at
+      %th.date
+        Created at
+      %th.date
+        Failed at
+  %tbody
+    -@reports.each do |report|
       %tr
         %td
           .label.label-info
-            {{queue}}
+            =report.queue.present? ? report.queue : "Blank"
         %td
-          <a href="#" data-content="<code class='block'>{{payload}}</code>" rel='popover' title='Payload'> {{id}} </a>
+          =link_to report.id, "#", data: { content: "<code class='block'>#{report.handler}</code>" }, rel: "popover"
         %td
-          {{priority}}
+          =report.priority
         %td
-          {{attempts}}
+          =report.attempts
         %td
-          <a href="#last_error_template" data-content="{{last_error}}" rel='modal' title='Last Error'> {{last_error_summary}} </a>
+          -if report.last_error
+            =link_to report.last_error.to_s.truncate(30), "#", data: {content: report.last_error}, :rel => 'modal', :title => 'Last Error'
         %td.date
-          {{run_at}}
+          =report.run_at
         %td.date
-          {{created_at}}
+          =report.created_at
         %td.date
-          {{#failed}}
-          {{failed_at}}
+          -if report.failed
+            =report.failed_at
           
-          = form_tag CGI.unescape(retry_dj_report_url(:id => "{{id}}")), :method => :post, :class => 'form-inline' do
-            = submit_tag 'Retry', :class => 'btn btn-info btn-mini'
+            = form_tag CGI.unescape(retry_dj_report_url(:id => report.id)), :method => :post, :class => 'form-inline' do
+              = submit_tag 'Retry', :class => 'btn btn-info btn-mini'
 
-          = form_tag CGI.unescape(dj_report_url(:id => "{{id}}")), :method => :delete, :class => 'form-inline' do
-            = submit_tag 'Delete', :class => 'btn btn-danger btn-mini'
+            = form_tag CGI.unescape(dj_report_url(:id => report.id)), :method => :delete, :class => 'form-inline' do
+              = submit_tag 'Delete', :class => 'btn btn-danger btn-mini'
+.center
+  = will_paginate @reports, class: 'center'
 
-          {{/failed}}
 
-      {{/.}}
-= will_paginate @reports, page_links: false if @reports
+.modal.hide
+  .modal-header
+    %button{ :type => "button", :class => "close", 'data-dismiss' => "modal" }
+      ×
+    %h3
+      Last Error
+  .modal-body
+    %code
 
-%script#last_error_template{ :type=> "text/x-handlebars-template" }
-  .modal.hide
-    .modal-header
-      %button{ :type => "button", :class => "close", 'data-dismiss' => "modal" }
-        ×
-      %h3
-        Last Error
-    .modal-body
-      %code
-        {{content}}
-    .modal-footer
-      = link_to "Close", '#', :class => 'btn btn-primary', 'data-dismiss'=> 'modal'
+  .modal-footer
+    = link_to "Close", '#', :class => 'btn btn-primary', 'data-dismiss'=> 'modal'
+

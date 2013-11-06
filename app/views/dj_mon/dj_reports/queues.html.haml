@@ -1,0 +1,33 @@
+%p
+  .lead
+    Delayed Jobs
+
+%ul.nav.nav-tabs
+  %li
+    = link_to "All", all_dj_reports_url
+  %li
+    = link_to "Failed", failed_dj_reports_url
+  %li
+    = link_to "Queued", queued_dj_reports_url
+  %li
+    = link_to "Active", active_dj_reports_url
+  %li
+    = link_to "Queues", queues_dj_reports_url
+
+
+%table.table.table-striped#jobs-table
+  %thead
+    %tr
+      %th
+        Queue
+      %th
+        Count
+  %tbody
+    -@queues.each do |queue|
+      %tr
+        %td
+          .label.label-info
+            =queue.queue.present? ? queue.queue : "Blank"
+        %td
+          =queue.count
+        %td

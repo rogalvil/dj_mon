@@ -34,17 +34,23 @@ code.block {
   word-wrap: break-word;
 }
 
-#dj-counts-view {
+.counts-view {
   position: relative;
   top: 12px;
   width: 400px;
 }
 
-#dj-counts-view .badge {
+.badge {
   float: right;
   margin: 0 2px;
 }
 
 form.form-inline {
   display: inline;
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
 }

@@ -8,6 +8,7 @@ DjMon::Engine.routes.draw do
       get :queued
       get :dj_counts
       get :settings
+      get :queues
     end
     member do
       post :retry

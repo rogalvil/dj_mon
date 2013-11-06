@@ -2,26 +2,30 @@ module DjMon
   class DjReport
     TIME_FORMAT = "%b %d %H:%M:%S"
 
-    attr_accessor :delayed_job
+    attr_accessor :delayed_job, :id, :queue, :priority, :attempts, :run_at, :created_at, :failed, :failed_at, :last_error_summary, :last_error, :payload
 
     def initialize delayed_job
       self.delayed_job = delayed_job
     end
 
-    def as_json(options={})
-      {
-        :id => delayed_job.id,
-        :payload => payload(delayed_job),
-        :priority => delayed_job.priority,
-        :attempts => delayed_job.attempts,
-        :queue => delayed_job.queue || "global",
-        :last_error_summary => delayed_job.last_error.to_s.truncate(30),
-        :last_error => delayed_job.last_error,
-        :failed_at => l_datetime(delayed_job.failed_at),
-        :run_at => l_datetime(delayed_job.run_at),
-        :created_at => l_datetime(delayed_job.created_at),
-        :failed => delayed_job.failed_at.present?
-      }
+    # def as_json(options={})
+    #   {
+    #     :id => delayed_job.id,
+    #     :payload => payload(delayed_job),
+    #     :priority => delayed_job.priority,
+    #     :attempts => delayed_job.attempts,
+    #     :queue => delayed_job.queue || "global",
+    #     :last_error_summary => delayed_job.last_error.to_s.truncate(30),
+    #     :last_error => delayed_job.last_error,
+    #     :failed_at => l_datetime(delayed_job.failed_at),
+    #     :run_at => l_datetime(delayed_job.run_at),
+    #     :created_at => l_datetime(delayed_job.created_at),
+    #     :failed => delayed_job.failed_at.present?
+    #   }
+    # end
+
+    def payload
+      payload(delayed_job)
     end
 
     def payload job
@@ -49,6 +53,10 @@ module DjMon
         reports_for DjMon::Backend.limited.queued
       end
 
+      def by_queue
+        reports_for DjMon::Backend.limited.all.select("queue, COUNT(*) AS count").group("queue")
+      end
+
       def dj_counts
         {
           :all => DjMon::Backend.all.size,
@@ -69,6 +77,14 @@ module DjMon
           :delayed_job_version => Gem.loaded_specs["delayed_job"].version.version,
           :dj_mon_version =>      DjMon::VERSION
         }
+      end
+
+      def search(id)
+        if id
+          reports_for DjMon::Backend.limited.find_by_id(id)
+        else
+          reports_for DjMon::Backend.limited.all
+        end
       end
     end
 

@@ -1,38 +1,50 @@
 module DjMon
   class DjReportsController < ActionController::Base
-    respond_to :json, :html
+    respond_to :html
     layout 'dj_mon'
 
     before_filter :authenticate
     before_filter :set_api_version
+    before_filter :dj_counts
 
     def index
-      @reports = DjReport.all_reports.paginate(page: params[:page], :per_page => 5)
-      respond_with @reports
     end
 
     def all
-      @reports = DjReport.all_reports.paginate(page: params[:page], :per_page => 5)
-      respond_with @reports
+      @reports = Delayed::Job.scoped
+      @reports = @reports.where(queue: params[:queue]) if params[:queue]
+      @reports = @reports.paginate(page: params[:page], :per_page => 10)
+      render 'index'
     end
 
     def failed
-      @reports = DjReport.failed_reports.paginate(page: params[:page], :per_page => 5)
-      respond_with @reports
+      @reports = Delayed::Job.where('failed_at IS NOT NULL').paginate(page: params[:page], :per_page => 10)
+      @reports = @reports.where(queue: params[:queue]) if params[:queue]
+      @reports = @reports.paginate(page: params[:page], :per_page => 10)
+      render 'index'
     end
 
     def active
-      @reports = DjReport.active_reports.paginate(page: params[:page], :per_page => 5)
-      respond_with @reports
+      @reports = Delayed::Job.where('failed_at IS NULL AND locked_by IS NOT NULL')
+      @reports = @reports.where(queue: params[:queue]) if params[:queue]
+      @reports = @reports.paginate(page: params[:page], :per_page => 10)
+      render 'index'
     end
 
     def queued
-      @reports = DjReport.queued_reports.paginate(page: params[:page], :per_page => 5)
-      respond_with @reports
+      @reports = Delayed::Job.where('failed_at IS NULL AND locked_by IS NULL')
+      @reports = @reports.where(queue: params[:queue]) if params[:queue]
+      @reports = @reports.paginate(page: params[:page], :per_page => 10)
+      render 'index'
+    end
+
+    def queues
+      @queues = DjMon::Backend.limited.all.select("queue, COUNT(*) AS count").group("queue")
+      respond_with @queues.map{|queue| { queue: "#{queue.queue.present? ? queue.queue.capitalize : 'Blank'}", count: queue.count}}
     end
 
     def dj_counts
-      respond_with DjReport.dj_counts
+      @counts = DjReport.dj_counts
     end
 
     def settings
