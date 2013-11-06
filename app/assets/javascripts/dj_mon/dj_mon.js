@@ -2,7 +2,6 @@
 //= require dj_mon/bootstrap_tab
 //= require dj_mon/bootstrap_popover
 //= require dj_mon/bootstrap_modal
-//= require dj_mon/mustache
 
 $(function(){
 
@@ -34,7 +33,6 @@ $(function(){
   $('.nav-tabs li.active').removeClass('active');
   var path = window.location.pathname;
   $('.nav-tabs li').each(function(){
-    console.log($.trim($(this).text().toLowerCase()));
     if (path.indexOf($.trim($(this).text().toLowerCase())) >=0){$(this).addClass('active')};
   })
 })

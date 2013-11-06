@@ -15,5 +15,5 @@ DjMon::Engine.routes.draw do
     end
   end
 
-  root :to => 'dj_reports#index'
+  root :to => 'dj_reports#all'
 end

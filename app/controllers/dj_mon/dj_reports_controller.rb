@@ -3,8 +3,6 @@ module DjMon
     respond_to :html
     layout 'dj_mon'
 
-    before_filter :authenticate
-    before_filter :set_api_version
     before_filter :dj_counts
     before_filter :get_distinct_queues
 
@@ -19,7 +17,7 @@ module DjMon
     end
 
     def failed
-      @reports = Delayed::Job.where('failed_at IS NOT NULL').paginate(page: params[:page], :per_page => 10)
+      @reports = Delayed::Job.where('failed_at IS NOT NULL')
       @reports = @reports.where(queue: params[:queue]) if params[:queue]
       @reports = @reports.paginate(page: params[:page], :per_page => 10)
       render 'index'
@@ -40,21 +38,21 @@ module DjMon
     end
 
     def queues
-      @queues = DjMon::Backend.limited.all.select("queue, COUNT(*) AS count").group("queue")
+      @queues = Delayed::Job.select("queue, COUNT(*) AS count").group("queue")
       respond_with @queues.map{|queue| { queue: "#{queue.queue.present? ? queue.queue.capitalize : 'Blank'}", count: queue.count}}
     end
 
     def dj_counts
-      @counts = DjReport.dj_counts
+      @counts = {
+          all: Delayed::Job.scoped.size,
+          failed: Delayed::Job.where('failed_at IS NOT NULL').size,
+          active: Delayed::Job.where('failed_at IS NULL AND locked_by IS NOT NULL').size,
+          queued: Delayed::Job.where('failed_at IS NULL AND locked_by IS NULL').size
+        }
     end
 
     def get_distinct_queues
       @queue_names = Delayed::Job.select(:queue).map(&:queue).uniq
-      puts @queue_names.inspect
-    end
-
-    def settings
-      respond_with DjReport.settings
     end
 
     def retry
@@ -72,20 +70,6 @@ module DjMon
         format.json { head(:ok) }
       end
     end
-
-    protected
-
-    def authenticate
-      authenticate_or_request_with_http_basic do |username, password|
-        username == Rails.configuration.dj_mon.username &&
-        password == Rails.configuration.dj_mon.password
-      end
-    end
-
-    def set_api_version
-      response.headers['DJ-Mon-Version'] = DjMon::VERSION
-    end
-
   end
 
 end
