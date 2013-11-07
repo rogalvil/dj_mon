@@ -7,6 +7,7 @@ module DjMon
     before_filter :get_distinct_queues
 
     def index
+      redirect_to action: 'all'
     end
 
     def all
