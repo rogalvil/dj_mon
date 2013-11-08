@@ -3,6 +3,7 @@ module DjMon
     respond_to :html
     layout 'dj_mon'
 
+    before_filter :authenticate
     before_filter :dj_counts
     before_filter :get_distinct_queues
 
@@ -69,6 +70,15 @@ module DjMon
       respond_to do |format|
         format.html { redirect_to root_url, :notice => "The job was deleted" }
         format.json { head(:ok) }
+      end
+    end
+
+    protected
+
+    def authenticate
+      authenticate_or_request_with_http_basic do |username, password|
+        username == Rails.configuration.dj_mon.username &&
+        password == Rails.configuration.dj_mon.password
       end
     end
   end

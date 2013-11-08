@@ -3,6 +3,10 @@ module DjMon
 
     isolate_namespace DjMon
 
+    config.dj_mon = ActiveSupport::OrderedOptions.new
+    config.dj_mon.username = "admin@bypasslane.com"
+    config.dj_mon.password = "minhingiswinning"
+
     if Rails.version > "3.1"
       initializer "DJMon precompile hook" do |app|
         app.config.assets.precompile += ['dj_mon/dj_mon.js', 'dj_mon/dj_mon.css']
