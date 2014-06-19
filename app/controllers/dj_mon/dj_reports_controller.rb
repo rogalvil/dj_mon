@@ -73,6 +73,24 @@ module DjMon
       end
     end
 
+    def edit
+      @job = Delayed::Job.find(params[:id])
+    end
+
+    def update
+      @job = Delayed::Job.find(params[:id])
+
+      if @job.update_attributes(params[:delayed_backend_active_record_job])
+        respond_to do |format|
+          format.html { redirect_to root_url, :notice => "The job was updated." }
+        end
+      else
+        respond_to do |format|
+          format.html { render :edit, :error => "Error updating record." }
+        end
+      end
+    end
+
     protected
 
     def authenticate

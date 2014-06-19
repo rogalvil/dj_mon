@@ -3,6 +3,7 @@
 //= require dj_mon/bootstrap_popover
 //= require dj_mon/bootstrap_modal
 
+//TESTING
 $(function(){
 
   $('a[rel=popover]').live('mouseenter', function(){

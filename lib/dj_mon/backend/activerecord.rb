@@ -44,6 +44,7 @@ module DjMon
         def retry id
           dj = Delayed::Job.find(id)
           dj.update_attribute :failed_at, nil if dj
+          dj.update_attribute :run_at, Time.now if dj
         end
       end
     end

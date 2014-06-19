@@ -1,0 +1,19 @@
+=form_for @job, url: dj_report_url(:id => @job.id), html: {class: 'form-horizontal'} do |f|
+  .control-group
+    %label.control-label
+      Priority
+    .controls
+      =f.text_field :priority
+  .control-group
+    %label.control-label
+      Queue
+    .controls
+      =f.text_field :queue
+  .control-group
+    %label.control-label
+      Handler
+    .controls
+      =f.text_area :handler, class: 'input-xxlarge'
+  .control-group
+    .controls
+      =f.submit "Save", class: 'btn btn-primary'

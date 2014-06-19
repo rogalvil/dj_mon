@@ -37,7 +37,9 @@
       %th.date
         Created at
       %th.date
-        Failed at
+        Locked at
+      %th
+        Actions
   %tbody
     -@reports.each do |report|
       %tr
@@ -58,14 +60,16 @@
         %td.date
           =report.created_at.strftime("%b %d %H:%M:%S")
         %td.date
-          -if report.failed
-            =report.failed_at
-          
-            = form_tag CGI.unescape(retry_dj_report_url(:id => report.id)), :method => :post, :class => 'form-inline' do
-              = submit_tag 'Retry', :class => 'btn btn-info btn-mini'
+          =report.locked_at
+          %br
+          =report.locked_by
+        %td.actions{nowrap: 'true'}
+          = form_tag CGI.unescape(retry_dj_report_url(:id => report.id)), :method => :post, :class => 'form-inline' do
+            = submit_tag 'Retry', :class => 'btn btn-info btn-mini'
 
-            = form_tag CGI.unescape(dj_report_url(:id => report.id)), :method => :delete, :class => 'form-inline' do
-              = submit_tag 'Delete', :class => 'btn btn-danger btn-mini'
+          = form_tag CGI.unescape(dj_report_url(:id => report.id)), :method => :delete, :class => 'form-inline' do
+            = submit_tag 'Delete', :class => 'btn btn-danger btn-mini'
+          =link_to 'Edit', edit_dj_report_url(:id => report.id), class: 'btn btn-mini'
 .center
   = will_paginate @reports, class: 'center'
 
