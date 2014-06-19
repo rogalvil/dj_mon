@@ -14,28 +14,28 @@ module DjMon
     def all
       @reports = Delayed::Job.scoped
       @reports = @reports.where(queue: params[:queue]) if params[:queue]
-      @reports = @reports.paginate(page: params[:page], :per_page => 10)
+      @reports = @reports.paginate(page: params[:page], :per_page => DjMon::PAGE_SIZE)
       render 'index'
     end
 
     def failed
       @reports = Delayed::Job.where('failed_at IS NOT NULL')
       @reports = @reports.where(queue: params[:queue]) if params[:queue]
-      @reports = @reports.paginate(page: params[:page], :per_page => 10)
+      @reports = @reports.paginate(page: params[:page], :per_page => DjMon::PAGE_SIZE)
       render 'index'
     end
 
     def active
       @reports = Delayed::Job.where('failed_at IS NULL AND locked_by IS NOT NULL')
       @reports = @reports.where(queue: params[:queue]) if params[:queue]
-      @reports = @reports.paginate(page: params[:page], :per_page => 10)
+      @reports = @reports.paginate(page: params[:page], :per_page => DjMon::PAGE_SIZE)
       render 'index'
     end
 
     def queued
       @reports = Delayed::Job.where('failed_at IS NULL AND locked_by IS NULL')
       @reports = @reports.where(queue: params[:queue]) if params[:queue]
-      @reports = @reports.paginate(page: params[:page], :per_page => 10)
+      @reports = @reports.paginate(page: params[:page], :per_page => DjMon::PAGE_SIZE)
       render 'index'
     end
 
