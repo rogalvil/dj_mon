@@ -41,14 +41,7 @@ module DjMon
 
     def queues
       @queues = Delayed::Job.select("queue, COUNT(*) AS count").group("queue")
-      total_count = @queues.inject(0) {|total.to_i, q.to_i| total.to_i + q.count.to_i}
-      queues = @queues.map{|queue| { queue: "#{queue.queue.present? ? queue.queue.capitalize : 'Blank'}", count: queue.count}}
-      respond_to do |format|
-        format.html {queues}
-        format.json do
-          render json: {total: total_count, queues: queues}
-        end
-      end
+      respond_with @queues.map{|queue| { queue: "#{queue.queue.present? ? queue.queue.capitalize : 'Blank'}", count: queue.count}}
     end
 
     def dj_counts
