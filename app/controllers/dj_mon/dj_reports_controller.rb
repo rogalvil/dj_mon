@@ -14,6 +14,7 @@ module DjMon
     def all
       @reports = Delayed::Job.scoped
       @reports = @reports.where(queue: params[:queue]) if params[:queue]
+      @reports = @reports.order(:run_at)
       @reports = @reports.paginate(page: params[:page], :per_page => DjMon::PAGE_SIZE)
       render 'index'
     end
@@ -21,6 +22,7 @@ module DjMon
     def failed
       @reports = Delayed::Job.where('failed_at IS NOT NULL')
       @reports = @reports.where(queue: params[:queue]) if params[:queue]
+      @reports = @reports.order(:run_at)
       @reports = @reports.paginate(page: params[:page], :per_page => DjMon::PAGE_SIZE)
       render 'index'
     end
@@ -28,6 +30,7 @@ module DjMon
     def active
       @reports = Delayed::Job.where('failed_at IS NULL AND locked_by IS NOT NULL')
       @reports = @reports.where(queue: params[:queue]) if params[:queue]
+      @reports = @reports.order(:run_at)
       @reports = @reports.paginate(page: params[:page], :per_page => DjMon::PAGE_SIZE)
       render 'index'
     end
@@ -35,12 +38,14 @@ module DjMon
     def queued
       @reports = Delayed::Job.where('failed_at IS NULL AND locked_by IS NULL')
       @reports = @reports.where(queue: params[:queue]) if params[:queue]
+      @reports = @reports.order(:run_at)
       @reports = @reports.paginate(page: params[:page], :per_page => DjMon::PAGE_SIZE)
       render 'index'
     end
 
     def queues
       @queues = Delayed::Job.select("queue, COUNT(*) AS count").group("queue")
+      @reports = @reports.order(:run_at)
       respond_with @queues.map{|queue| { queue: "#{queue.queue.present? ? queue.queue.capitalize : 'Blank'}", count: queue.count}}
     end
 
