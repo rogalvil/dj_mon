@@ -45,7 +45,6 @@ module DjMon
 
     def queues
       @queues = Delayed::Job.select("queue, COUNT(*) AS count").group("queue")
-      @reports = @reports.order(:run_at)
       respond_with @queues.map{|queue| { queue: "#{queue.queue.present? ? queue.queue.capitalize : 'Blank'}", count: queue.count}}
     end
 
